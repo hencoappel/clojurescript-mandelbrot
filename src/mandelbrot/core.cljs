@@ -22,7 +22,6 @@
         a 0
         b (- 1 (- h i))
         c (- h i)]
-    ; (println iterPercent h i a b c)
     (if (< (- 1 iterPercent) 0.0001)
       [0 0 0] ; black
       (map #(* 255 %)
@@ -34,12 +33,12 @@
              4 [c a 1]
              [1 a b])))))
 
-(defn calcMandelbrot [width height]
+(defn calcMandelbrot [width height maxIter]
   (mapcat concat
-            (repeat (vector 255))
             (map
-              #(convertIterToColour % 20 rainbowColourScheme)
-              (apply concat (mb/calcIterForRange -2.5 1 width -1 1 height 20)))))
+              #(convertIterToColour % maxIter rainbowColourScheme)
+              (apply concat (mb/calcIterForRange -2.5 1 width -1 1 height maxIter)))
+            (repeat (vector 255))))
 
 
 (defn setImageData [image data]
@@ -47,7 +46,7 @@
 
 (defn createImage [image]
   (let [imgData (take (* image.width image.height) (cycle (range 255)))
-        idv (map vector (iterate inc 0) (calcMandelbrot image.width image.height))]
+        idv (map vector (iterate inc 0) (calcMandelbrot image.width image.height 50))]
     (doseq [[i v] idv]
       (aset image.data i v))))
 
