@@ -1,5 +1,6 @@
 (ns ^:figwheel-always mandelbrot.core
-    (:require))
+    (:require
+      [mandelbrot.mandelbrot :as mb]))
 
 (enable-console-print!)
 
@@ -21,6 +22,7 @@
         a 0
         b (- 1 (- h i))
         c (- h i)]
+    ; (println iterPercent h i a b c)
     (if (< (- 1 iterPercent) 0.0001)
       [0 0 0] ; black
       (map #(* 255 %)
@@ -33,9 +35,11 @@
              [1 a b])))))
 
 (defn calcMandelbrot [width height]
-  (mapcat conj
+  (mapcat concat
             (repeat (vector 255))
-            (take (* width height) (cycle (range 255)))))
+            (map
+              #(convertIterToColour % 20 rainbowColourScheme)
+              (apply concat (mb/calcIterForRange -2.5 1 width -1 1 height 20)))))
 
 
 (defn setImageData [image data]
@@ -50,13 +54,14 @@
 (defn drawSquare [ctx x y width height]
   (let [image (.createImageData ctx width height)]
     (createImage image)
+    (jsprint image)
     (.putImageData ctx image x y)))
 
 (let [viewport (.getElementById js/document "viewport")
       ctx (.getContext viewport "2d")
       width viewport.width
       height viewport.height]
-  (drawSquare ctx 100 100 100 100))
+  (drawSquare ctx 0 0 600 400))
 
 
 (defn on-js-reload []
