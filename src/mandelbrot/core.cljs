@@ -22,45 +22,42 @@
         a 0
         b (- 1 (- h i))
         c (- h i)]
-    (if (< (- 1 iterPercent) 0.0001)
-      [0 0 0] ; black
+    (if (< (- 1 iterPercent) 0.000001)
+      [0 0 0 255]; black
       (map #(* 255 %)
            (case i
-             0 [1 c a]
-             1 [b 1 a]
-             2 [a 1 c]
-             3 [a b 1]
-             4 [c a 1]
-             [1 a b])))))
+             0 [1 c a 1]
+             1 [b 1 a 1]
+             2 [a 1 c 1]
+             3 [a b 1 1]
+             4 [c a 1 1]
+               [1 a b 1])))))
 
 (defn calcMandelbrot [width height maxIter]
-  (mapcat concat
-            (map
-              #(convertIterToColour % maxIter rainbowColourScheme)
-              (apply concat (mb/calcIterForRange -2.5 1 width -1 1 height maxIter)))
-            (repeat (vector 255))))
-
+  (mapcat
+    #(convertIterToColour % maxIter rainbowColourScheme)
+    (apply concat (mb/calcIterForRange -2.5 1 width -1 1 height maxIter))))
 
 (defn setImageData [image data]
-   (let [idv (map vector (iterate inc 0) data)]))
-
-(defn createImage [image]
-  (let [imgData (take (* image.width image.height) (cycle (range 255)))
-        idv (map vector (iterate inc 0) (calcMandelbrot image.width image.height 50))]
+  (let [idv (map vector (iterate inc 0) data)]
     (doseq [[i v] idv]
       (aset image.data i v))))
 
-(defn drawSquare [ctx x y width height]
-  (let [image (.createImageData ctx width height)]
-    (createImage image)
-    (jsprint image)
+(defn drawMandlebrot [ctx x y width height]
+  (let [image (.createImageData ctx width height)
+        mdlbrt (calcMandelbrot image.width image.height 50)]
+    (setImageData image mdlbrt)
     (.putImageData ctx image x y)))
+
+(defn drawRect [ctx x y width height]
+  (.fillRect ctx x y width height))
 
 (let [viewport (.getElementById js/document "viewport")
       ctx (.getContext viewport "2d")
       width viewport.width
       height viewport.height]
-  (drawSquare ctx 0 0 600 400))
+  (drawRect ctx 0 0 600 400)
+  (drawMandlebrot ctx 0 0 600 400))
 
 
 (defn on-js-reload []
