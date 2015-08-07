@@ -23,7 +23,7 @@
         b (- 1 (- h i))
         c (- h i)]
     (if (< (- 1 iterPercent) 0.000001)
-      [0 0 0 255]; black
+      [0 0 0 255] ;; black
       (map #(* 255 %)
            (case i
              0 [1 c a 1]
@@ -45,7 +45,7 @@
 
 (defn drawMandlebrot [ctx x y width height]
   (let [image (.createImageData ctx width height)
-        mdlbrt (calcMandelbrot image.width image.height 50)]
+        mdlbrt (calcMandelbrot image.width image.height 100)]
     (setImageData image mdlbrt)
     (.putImageData ctx image x y)))
 

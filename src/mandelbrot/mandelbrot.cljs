@@ -1,7 +1,7 @@
 (ns ^:figwheel-always mandelbrot.mandelbrot
     (:require))
 
-(defn calcIterations [real imag maxIter]
+(defn calcIterations [^double real ^double imag ^double maxIter]
    (loop [r (double 0)
           i (double 0)
           iter (int 0)]
