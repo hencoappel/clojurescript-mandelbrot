@@ -5,12 +5,15 @@
    (loop [r (double 0)
           i (double 0)
           iter (int 0)]
-     (if (and (< (+ (* r r) (* i i)) 4) (< iter maxIter))
-      (recur
-        (+ (- (* r r) (* i i)) real)
-        (+(* 2 r i) imag)
-        (inc iter))
-      iter)))
+     (let [rSqr (* r r)
+           iSqr (* i i)
+           ri (* r i)]
+       (if (and (< (+ rSqr iSqr) 4) (< iter maxIter))
+         (recur
+           (+ (- rSqr iSqr) real)
+           (+ ri ri imag)
+           (inc iter))
+         iter))))
 
 (defn linspace [start end steps]
   (let [step (/ (- end start) (dec steps))]
