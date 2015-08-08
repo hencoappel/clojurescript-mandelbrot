@@ -57,7 +57,9 @@
       width viewport.width
       height viewport.height]
   (drawRect ctx 0 0 600 400)
-  (drawMandlebrot ctx 0 0 600 400))
+  (.time js/console "drawMandlebrot")
+  (drawMandlebrot ctx 0 0 600 400)
+  (.timeEnd js/console "drawMandlebrot"))
 
 
 (defn on-js-reload []
